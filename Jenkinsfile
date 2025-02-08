@@ -13,8 +13,9 @@ pipeline {
         stage('checkout') {
             steps {
                  script{
+                        dir("terraform")
                         {
-                            git "https://github.com/Ashu7072/Terraform-Jenkins.git"
+                            git "https://github.com/Ashu7072/Jenkins-CICD.git"
                         }
                     }
                 }
@@ -22,9 +23,9 @@ pipeline {
 
         stage('Plan') {
             steps {
-                sh 'pwd;cd Terraform-jenkins/ ; terraform init'
-                sh "pwd;cd Terraform-jenkins/ ; terraform plan -out tfplan"
-                sh 'pwd;cd Terraform-jenkins/ ; terraform show -no-color tfplan > tfplan.txt'
+                sh 'pwd;cd terraform/ ; terraform init'
+                sh "pwd;cd terraform/ ; terraform plan -out tfplan"
+                sh 'pwd;cd terraform/ ; terraform show -no-color tfplan > tfplan.txt'
             }
         }
         stage('Approval') {
@@ -36,7 +37,7 @@ pipeline {
 
            steps {
                script {
-                    def plan = readFile 'Terraform-jenkins/tfplan.txt'
+                    def plan = readFile 'terraform/tfplan.txt'
                     input message: "Do you want to apply the plan?",
                     parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                }
@@ -45,7 +46,7 @@ pipeline {
 
         stage('Apply') {
             steps {
-                sh "pwd;cd Terraform-jenkins/ ; terraform apply -input=false tfplan"
+                sh "pwd;cd terraform/ ; terraform apply -input=false tfplan"
             }
         }
     }
